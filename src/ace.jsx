@@ -51,6 +51,7 @@ export default class ReactAce extends PureComponent {
       commands,
       annotations,
       markers,
+	  onAnnotationsChange
     } = this.props;
 
     this.editor = ace.edit(this.refs.editor);
@@ -78,7 +79,14 @@ export default class ReactAce extends PureComponent {
     this.editor.on('change', this.onChange);
     this.editor.session.on('changeScrollTop', this.onScroll);
     this.handleOptions(this.props);
-    this.editor.getSession().setAnnotations(annotations || []);
+	let edSession = this.editor.getSession();
+    edSession.setAnnotations(annotations || []);
+    edSession.on('changeAnnotation', function(){
+		if ( onAnnotationsChange ) {
+			onAnnotationsChange(edSession.getAnnotations().map(ann=>{ ann.id = ann.row+':'+ann.column; return ann; }));
+		}
+	});
+
     this.handleMarkers(markers || []);
 
     // get a list of possible options to avoid 'misspelled option errors'

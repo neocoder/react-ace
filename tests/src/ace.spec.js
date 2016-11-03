@@ -195,6 +195,24 @@ describe('Ace Component', () => {
       wrapper.instance().onBlur();
     });
 
+	it('should call the onAnnotationsChange method callback', () => {
+      const onAnnotationsChangeCallback = sinon.spy();
+	  const annotations = [{ row: 1, column: 2, type: 'error', text: 'Some error.'}]
+	  const annotationsWithId = [{ id: '1:2', row: 1, column: 2, type: 'error', text: 'Some error.'}]
+      const wrapper = mount(<AceEditor onAnnotationsChange={onAnnotationsChangeCallback}/>, mountOptions);
+
+      // Check is not previously called
+      expect(onAnnotationsChangeCallback.callCount).to.equal(0);
+
+      // Trigger the change event
+      const expectText = 'React Ace Test';
+      wrapper.instance().editor.setValue(expectText, 1);
+      wrapper.instance().editor.getSession().setAnnotations(annotations);
+
+      expect(onAnnotationsChangeCallback.callCount).to.equal(1);
+      expect(onAnnotationsChangeCallback.getCall(0).args[0]).to.deep.equal(annotationsWithId);
+    });
+
   });
 
   describe('ComponentWillReceiveProps', () => {
@@ -249,6 +267,7 @@ describe('Ace Component', () => {
       editor = wrapper.instance().editor;
       expect(editor.getValue()).to.equal(newValue);
     });
+
 
     it('should trigger the focus on componentWillReceiveProps', () => {
       const onFocusCallback = sinon.spy();
