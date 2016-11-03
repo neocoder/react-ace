@@ -83,7 +83,7 @@ export default class ReactAce extends PureComponent {
     edSession.setAnnotations(annotations || []);
     edSession.on('changeAnnotation', function(){
 		if ( onAnnotationsChange ) {
-			onAnnotationsChange(edSession.getAnnotations().map(ann=>{ ann.id = ann.row+':'+ann.column; return ann; }));
+			onAnnotationsChange(edSession.getAnnotations().map(ann=>{ ann.row++; ann.column++; ann.id = ann.row+':'+ann.column; return ann; }));
 		}
 	});
 
